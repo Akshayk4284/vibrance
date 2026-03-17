@@ -1,93 +1,453 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<title>Register - VIBRANCE</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College registration </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f0f4fa 0%, #dae5f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0,20,40,0.4), 0 4px 18px 0 rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 650px;
+            padding: 2.5rem 2.2rem;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: scale(1.01);
+        }
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #0b2b44, #1f4b6e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .subhead {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #2c3e4f;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2b6c9e;
+            padding-left: 1rem;
+            background: #ebf2f9;
+            border-radius: 0 1rem 1rem 0;
+            line-height: 1.4;
+            width: fit-content;
+            padding: 0.5rem 1.2rem;
+        }
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .input-row .input-group {
+            flex: 1 1 200px;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            color: #1f3a4c;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        label i {
+            font-style: normal;
+            color: #1f6ea0;
+            font-weight: 500;
+        }
+        .required-asterisk {
+            color: #b91c1c;
+            font-size: 1.2rem;
+            line-height: 1;
+            margin-left: 2px;
+        }
+        input, select {
+            background: white;
+            border: 2px solid #dde7f0;
+            border-radius: 20px;
+            padding: 0.85rem 1.4rem;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            color: #0b2b3f;
+            font-weight: 500;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        input:focus, select:focus {
+            border-color: #1f6ea0;
+            box-shadow: 0 8px 18px -12px #1f6ea0;
+            background-color: #fbfdff;
+        }
+        input:hover:not(:focus), select:hover:not(:focus) {
+            border-color: #9bb4cc;
+        }
+        input::placeholder {
+            color: #96adc2;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+        input:invalid:not(:placeholder-shown) {
+            border-color: #e0a2a2;
+            background: #fff8f8;
+        }
+        input:valid:not(:placeholder-shown) {
+            border-color: #1d7644;
+            background: #f3fcf7;
+        }
+        .field-hint {
+            font-size: 0.8rem;
+            color: #3e5e77;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .field-hint i {
+            font-style: normal;
+            background: #eef4fa;
+            padding: 0.15rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #1b4f72;
+        }
+        .action-buttons {
+            margin-top: 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn {
+            border: none;
+            padding: 0.9rem 2.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            background: white;
+            cursor: pointer;
+            transition: 0.15s ease;
+            box-shadow: 0 6px 14px rgba(26, 67, 113, 0.18);
+            border: 1px solid rgba(255,255,255,0.5);
+            flex: 0 1 auto;
+            min-width: 180px;
+        }
+        .btn-primary {
+            background: #1f4b6e;
+            color: white;
+            border: 1px solid #5688b1;
+        }
+        .btn-primary:hover {
+            background: #133b54;
+            transform: translateY(-3px);
+            box-shadow: 0 18px 28px -12px #1f4b6e;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #cbdbe9, transparent);
+            margin: 1rem 0 0.5rem 0;
+        }
+        .register-number-hint {
+            display: flex;
+            gap: 0.5rem;
+            align-items: baseline;
+            font-size: 0.8rem;
+            color: #38658b;
+        }
+        .password-hint {
+            display: flex;
+            gap: 0.5rem;
+            align-items: baseline;
+            font-size: 0.8rem;
+            color: #38658b;
+            margin-top: 0.2rem;
+        }
+        .password-hint span {
+            background: #eef4fa;
+            padding: 0.15rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+        }
+        .card hr:last-of-type {
+            margin-bottom: 0;
+        }
+    </style>
 </head>
 <body>
+    <div class="card">
+        <h1>
+            <span>🎓</span> college registration
+        </h1>
+        <div class="subhead">
+            fill the details — all fields required · email + password (min 6)
+        </div>
 
-<nav>
-  <a href="index.html">Home</a> |
-  <a href="events.html">Events</a> |
-  <a href="register.html">Register</a>
-</nav>
+        <form id="registrationForm" class="form-grid">
+            <!-- FULL NAME -->
+            <div class="input-group">
+                <label><span>full name</span><span class="required-asterisk">*</span></label>
+                <input type="text" id="fullName" name="fullName" placeholder="e.g. Anjali Mehta" required minlength="2" maxlength="60">
+            </div>
 
-<div class="form-container">
+            <!-- REGISTER NUMBER + EMAIL -->
+            <div class="input-row">
+                <div class="input-group">
+                    <label><span>📋 register number</span><span class="required-asterisk">*</span></label>
+                    <input type="text" id="regNumber" name="regNumber" placeholder="e.g. 2023CS056" required minlength="4" maxlength="20">
+                    <div class="register-number-hint">
+                        <span>🔢 alphanumeric (4–20 chars)</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label><span>📧 email</span><span class="required-asterisk">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="student@college.edu" 
+                           required 
+                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                           title="enter a valid email address (e.g. name@domain.com)">
+                    <div class="field-hint">
+                        <i>✔️ valid email required</i>
+                    </div>
+                </div>
+            </div>
 
-<h2>VIBRANCE Event Registration</h2>
+            <!-- PASSWORD field -->
+            <div class="input-group">
+                <label><span>🔐 password</span><span class="required-asterisk">*</span></label>
+                <input type="password" id="password" name="password" 
+                       placeholder="········" 
+                       required minlength="6" maxlength="50">
+                <div class="password-hint">
+                    <span>minimum 6 characters</span>
+                    <span>🔒 strong recommended</span>
+                </div>
+            </div>
 
-<form id="registerForm">
+            <!-- DEPARTMENT + YEAR -->
+            <div class="input-row">
+                <div class="input-group">
+                    <label><span>📚 department</span><span class="required-asterisk">*</span></label>
+                    <select id="department" name="department" required>
+                        <option value="" disabled selected>– select department –</option>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="CIVIL">CIVIL</option>
+                        <option value="MECH">MECH</option>
+                        <option value="AD">AD</option>
+                        <option value="MCA">MCA</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label><span>📅 year (1 to 4)</span><span class="required-asterisk">*</span></label>
+                    <select id="year" name="year" required>
+                        <option value="" disabled selected>– select year –</option>
+                        <option value="1">1st year</option>
+                        <option value="2">2nd year</option>
+                        <option value="3">3rd year</option>
+                        <option value="4">4th year</option>
+                    </select>
+                </div>
+            </div>
 
-<label>Student Name</label>
-<input id="name" type="text" placeholder="Enter your name" required>
+            <!-- action buttons -->
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary" id="registerBtn">✅ register</button>
+            </div>
+        </form>
 
-<label>Register Number</label>
-<input id="reg" type="text" placeholder="Enter register number" required>
+        <!-- feedback / live message area -->
+        <div id="liveMessage" style="min-height: 2.5rem; margin-top: 1rem; font-weight: 500; color: #1a4d6b;"></div>
+    </div>
 
-<label>Email</label>
-<input id="email" type="email" placeholder="Enter email" required>
+    <!-- Firebase SDK (correct import) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-<label>Department</label>
-<select id="dept" required>
-<option value="">Select Department</option>
-<option>CSE</option>
-<option>ECE</option>
-<option>EEE</option>
-<option>MECH</option>
-<option>CIVIL</option>
-<option>MCA</option>
-</select>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+            authDomain: "vibrance-fest-1310a.firebaseapp.com",
+            projectId: "vibrance-fest-1310a",
+            storageBucket: "vibrance-fest-1310a.firebasestorage.app",
+            messagingSenderId: "564934076568",
+            appId: "1:564934076568:web:8ef57661b9129d474208ed"
+        };
 
-<button type="submit">Register</button>
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-<p id="successMsg"></p>
+        // Get DOM elements
+        const form = document.getElementById('registrationForm');
+        const nameInp = document.getElementById('fullName');
+        const regInp = document.getElementById('regNumber');
+        const emailInp = document.getElementById('email');
+        const passwordInp = document.getElementById('password');
+        const deptSelect = document.getElementById('department');
+        const yearSelect = document.getElementById('year');
+        const msgDiv = document.getElementById('liveMessage');
 
-</form>
+        // Helper to show message
+        function showMessage(text, isSuccess = true) {
+            msgDiv.textContent = text;
+            msgDiv.style.color = isSuccess ? '#0f5c2f' : '#b13e3e';
+            setTimeout(() => {
+                if (msgDiv.textContent === text) {
+                    msgDiv.textContent = '';
+                }
+            }, 4000);
+        }
 
-</div>
-<script type="module">
+        // Email validation
+        function isEmailValid(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(email);
+        }
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        // Form validation
+        function validateForm() {
+            const name = nameInp.value.trim();
+            const reg = regInp.value.trim();
+            const email = emailInp.value.trim();
+            const password = passwordInp.value;
+            const dept = deptSelect.value;
+            const year = yearSelect.value;
 
-import { getFirestore, collection, addDoc } 
-from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+            if (name === '') {
+                showMessage('❌ full name is required', false);
+                nameInp.focus();
+                return false;
+            }
+            if (reg === '') {
+                showMessage('❌ register number is required', false);
+                regInp.focus();
+                return false;
+            }
+            if (reg.length < 4) {
+                showMessage('❌ register number must be at least 4 characters', false);
+                regInp.focus();
+                return false;
+            }
+            if (email === '') {
+                showMessage('❌ email address is required', false);
+                emailInp.focus();
+                return false;
+            }
+            if (!isEmailValid(email)) {
+                showMessage('❌ enter a valid email (e.g., name@domain.com)', false);
+                emailInp.focus();
+                return false;
+            }
+            if (password === '') {
+                showMessage('❌ password is required', false);
+                passwordInp.focus();
+                return false;
+            }
+            if (password.length < 6) {
+                showMessage('❌ password must be at least 6 characters', false);
+                passwordInp.focus();
+                return false;
+            }
+            if (!dept || dept === '') {
+                showMessage('❌ please select your department', false);
+                deptSelect.focus();
+                return false;
+            }
+            if (!year || year === '') {
+                showMessage('❌ please select year (1 to 4)', false);
+                yearSelect.focus();
+                return false;
+            }
+            return true;
+        }
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
-  authDomain: "vibrance-fest-1310a.firebaseapp.com",
-  projectId: "vibrance-fest-1310a",
-  storageBucket: "vibrance-fest-1310a.firebasestorage.app",
-  messagingSenderId: "564934076568",
-  appId: "1:564934076568:web:8ef57661b9129d474208ed"
-};
+        // Handle form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) return;
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+            const name = nameInp.value.trim();
+            const reg = regInp.value.trim();
+            const email = emailInp.value.trim();
+            const password = passwordInp.value; // In production, NEVER store plain text passwords
+            const dept = deptSelect.value;
+            const year = yearSelect.value;
 
-document.getElementById("registerForm").addEventListener("submit", async function(e){
+            try {
+                // Save to Firebase Firestore
+                await addDoc(collection(db, "registrations"), {
+                    name: name,
+                    registerNumber: reg,
+                    email: email,
+                    password: password, // ⚠️ WARNING: Storing plain text passwords is insecure
+                    department: dept,
+                    year: year,
+                    timestamp: new Date()
+                });
+                
+                showMessage(`✅ Welcome, ${name}! Registration successful!`, true);
+                
+                // Optional: Reset form after successful registration
+                // form.reset();
+                
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showMessage('❌ Registration failed. Please try again.', false);
+            }
+        });
 
-e.preventDefault();
+        // Real-time email validation hint
+        emailInp.addEventListener('input', function() {
+            const email = emailInp.value.trim();
+            if (email !== '' && !isEmailValid(email)) {
+                emailInp.setCustomValidity('invalid');
+            } else {
+                emailInp.setCustomValidity('');
+            }
+        });
 
-const name = document.getElementById("name").value;
-const reg = document.getElementById("reg").value;
-const email = document.getElementById("email").value;
-const dept = document.getElementById("dept").value;
-
-await addDoc(collection(db,"registrations"),{
-name:name,
-register:reg,
-email:email,
-department:dept,
-time:new Date()
-});
-
-document.getElementById("successMsg").innerText = "✔ Registration Successful";
-
-});
-
-</script>
+        // Initial message
+        showMessage('✨ complete all fields & click register', true);
+    </script>
 </body>
 </html>
