@@ -7,18 +7,18 @@
 <body>
 
 <h1>Upcoming VIBRANCE Events</h1>
-<div class="search-box">
 
+<div class="search-box">
 <input 
 type="text" 
 id="searchInput" 
 placeholder="Search events..." 
 onkeyup="searchEvents()">
-
 </div>
 
 <div class="event-container">
 
+<!-- Event 1 -->
 <div class="event-card">
 
 <img src="assets/dance.jpg">
@@ -27,10 +27,11 @@ onkeyup="searchEvents()">
 <p>Date: 10 March</p>
 <p>Venue: Auditorium</p>
 
-<a href="register.html" class="btn">Register</a>
+<a href="register.html?event=Dance Competition" class="btn">Register</a>
 
 </div>
 
+<!-- Event 2 -->
 <div class="event-card">
 
 <img src="assets/music.jpg">
@@ -39,10 +40,11 @@ onkeyup="searchEvents()">
 <p>Date: 11 March</p>
 <p>Venue: Main Stage</p>
 
-<a href="register.html" class="btn">Register</a>
+<a href="register.html?event=Battle of Bands" class="btn">Register</a>
 
 </div>
 
+<!-- Event 3 -->
 <div class="event-card">
 
 <img src="assets/drama.jpg">
@@ -51,10 +53,14 @@ onkeyup="searchEvents()">
 <p>Date: 12 March</p>
 <p>Venue: Seminar Hall</p>
 
-<a href="register.html" class="btn">Register</a>
+<a href="register.html?event=Drama Night" class="btn">Register</a>
 
 </div>
+
+</div>
+
 <script src="js/script.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 
 <script>
@@ -65,5 +71,6 @@ glare:true,
 "max-glare":0.3
 });
 </script>
+
 </body>
 </html>

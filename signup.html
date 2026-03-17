@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Signup - VIBRANCE</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="form-container">
+
+<h2>Signup</h2>
+
+<form id="signupForm">
+
+<label>Name</label>
+<input id="name" type="text" required>
+
+<label>Register Number</label>
+<input id="reg" type="text" required>
+
+<label>Email</label>
+<input id="email" type="email" required>
+
+<label>Password</label>
+<input id="password" type="password" required>
+
+<button type="submit">Sign Up</button>
+
+<p id="msg"></p>
+
+</form>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+// ✅ YOUR REAL FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+  authDomain: "vibrance-fest-1310a.firebaseapp.com",
+  projectId: "vibrance-fest-1310a",
+  storageBucket: "vibrance-fest-1310a.firebasestorage.app",
+  messagingSenderId: "564934076568",
+  appId: "1:564934076568:web:8ef57661b9129d474208ed"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const form = document.getElementById("signupForm");
+const msg = document.getElementById("msg");
+
+form.addEventListener("submit", async (e) => {
+
+e.preventDefault();
+
+const name = document.getElementById("name").value;
+const reg = document.getElementById("reg").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+msg.innerText = "Creating account...";
+
+try {
+
+// 🔐 Create user
+const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+const user = userCredential.user;
+
+// 📦 Store extra data
+await setDoc(doc(db, "users", user.uid), {
+  name: name,
+  register: reg,
+  email: email
+});
+
+msg.innerText = "✔ Signup Successful";
+
+// 👉 Redirect to login
+setTimeout(() => {
+  window.location.href = "login.html";
+}, 1500);
+
+} catch (error) {
+
+console.error(error);
+msg.innerText = "❌ " + error.message;
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

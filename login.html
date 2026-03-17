@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login - VIBRANCE</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="form-container">
+
+<h2>Login</h2>
+
+<form id="loginForm">
+
+<label>Email</label>
+<input id="email" type="email" required>
+
+<label>Password</label>
+<input id="password" type="password" required>
+
+<button type="submit">Login</button>
+
+<p id="msg"></p>
+
+</form>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+// ✅ SAME CONFIG AS SIGNUP
+const firebaseConfig = {
+  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+  authDomain: "vibrance-fest-1310a.firebaseapp.com",
+  projectId: "vibrance-fest-1310a",
+  storageBucket: "vibrance-fest-1310a.firebasestorage.app",
+  messagingSenderId: "564934076568",
+  appId: "1:564934076568:web:8ef57661b9129d474208ed"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const form = document.getElementById("loginForm");
+const msg = document.getElementById("msg");
+
+form.addEventListener("submit", async (e) => {
+
+e.preventDefault();
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+msg.innerText = "Logging in...";
+
+try {
+
+// 🔐 Login user
+await signInWithEmailAndPassword(auth, email, password);
+
+msg.innerText = "✔ Login Successful";
+
+// 👉 Redirect after login
+setTimeout(() => {
+  window.location.href = "events.html";
+}, 1000);
+
+} catch (error) {
+
+console.error(error);
+msg.innerText = "❌ " + error.message;
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

@@ -430,9 +430,10 @@ top:0;
 left:0;
 z-index:-1;
 }
+/* CENTER FORM PROPERLY */
 .form-container{
-max-width:400px;
-margin:60px auto;
+width:350px;
+margin:100px auto; /* pushes down nicely */
 padding:30px;
 
 background:rgba(255,255,255,0.1);
@@ -440,6 +441,37 @@ backdrop-filter:blur(10px);
 
 border-radius:15px;
 box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* IMPROVE FORM LOOK */
+form{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+/* INPUT STYLE */
+input, select{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:none;
+}
+
+/* BUTTON STYLE */
+button{
+width:100%;
+padding:12px;
+background:linear-gradient(90deg,#9d4edd,#7209b7);
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#7209b7;
 }
 
 form{

@@ -41,53 +41,82 @@
 <option>MCA</option>
 </select>
 
-<button type="submit">Register</button>
+<!-- ✅ NEW EVENT FIELD -->
+<label>Event Name</label>
+<input id="event" type="text" readonly>
 
+<button type="submit">Register</button>
+<p id="msg" style="color:white; text-align:center;"></p>
 <p id="successMsg"></p>
 
 </form>
 
 </div>
+
+<!-- ✅ AUTO-FILL EVENT FROM URL -->
+<script>
+const params = new URLSearchParams(window.location.search);
+const eventName = params.get("event");
+
+if(eventName){
+document.getElementById("event").value = eventName;
+}
+</script>
+
+<!-- ✅ FIREBASE BACKEND -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-
 import { getFirestore, collection, addDoc } 
 from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
   authDomain: "vibrance-fest-1310a.firebaseapp.com",
-  projectId: "vibrance-fest-1310a",
-  storageBucket: "vibrance-fest-1310a.firebasestorage.app",
-  messagingSenderId: "564934076568",
-  appId: "1:564934076568:web:8ef57661b9129d474208ed"
+  projectId: "vibrance-fest-1310a"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.getElementById("registerForm").addEventListener("submit", async function(e){
+const form = document.getElementById("registerForm");
+const msg = document.getElementById("msg");
+
+form.addEventListener("submit", async (e)=>{
 
 e.preventDefault();
+
+msg.innerText = "Registering...";
 
 const name = document.getElementById("name").value;
 const reg = document.getElementById("reg").value;
 const email = document.getElementById("email").value;
 const dept = document.getElementById("dept").value;
+const event = document.getElementById("event").value;
+
+try {
 
 await addDoc(collection(db,"registrations"),{
-name:name,
+name,
 register:reg,
-email:email,
+email,
 department:dept,
+event,
 time:new Date()
 });
 
-document.getElementById("successMsg").innerText = "✔ Registration Successful";
+msg.innerText = "✔ Registration Successful";
+
+} catch(error){
+
+msg.innerText = "❌ " + error.message;
+console.log(error);
+
+}
 
 });
 
 </script>
+
 </body>
 </html>
