@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="form-container">
+  <h2>🔐 Admin Login</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB_pWzRpFgKMwYNwgefDqAHqSU4T4Cpksc",
+  authDomain: "vibrance-5e4f4.firebaseapp.com",
+  projectId: "vibrance-5e4f4",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// 🔐 Login function
+window.login = async function() {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+
+    setTimeout(() => {
+      window.location.href = "admin.html";
+    }, 500);
+
+  } catch (err) {
+    alert("Invalid login ❌");
+  }
+
+};
+
+</script>
+
+</body>
+</html>

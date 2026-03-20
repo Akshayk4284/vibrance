@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Results</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html">Home</a> |
+  <a href="events.html">Events</a> |
+  <a href="results.html">Results</a>
+</nav>
+
+<div id="announcement" class="announcement hidden">
+  <h2>🏆 New Winner!</h2>
+  <p id="announcement-text"></p>
+</div>
+
+<section class="results-container">
+
+<h1><span style="color:#00e5ff;">🏆 Event Results</span></h1>
+
+<div id="results-list" class="results-grid"></div>
+
+</section>
+
+<!-- Firebase -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB_pWzRpFgKMwYNwgefDqAHqSU4T4Cpksc",
+  authDomain: "vibrance-5e4f4.firebaseapp.com",
+  projectId: "vibrance-5e4f4",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("results-list");
+
+// 🔥 REAL-TIME RESULTS
+onSnapshot(collection(db, "results"), (snapshot) => {
+
+  let data = [];
+
+  snapshot.forEach(doc => {
+    data.push(doc.data());
+  });
+
+  container.innerHTML = "";
+
+  data.forEach(event => {
+
+  container.innerHTML += `
+  <div class="result-card">
+
+    <h2 class="event-title">${event.eventName}</h2>
+
+    <div class="result-row winner">
+      🥇 <span>${event.first}</span>
+    </div>
+
+    <div class="result-row runner">
+      🥈 <span>${event.second}</span>
+    </div>
+
+    <div class="result-row third">
+      🥉 <span>${event.third}</span>
+    </div>
+
+  </div>
+`;
+  });
+
+});
+
+</script>
+
+</body>
+</html>

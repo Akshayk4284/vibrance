@@ -14,8 +14,9 @@
 <body>
 
 <nav>
-  <a href="index.html">Home</a> |
+  <a href="index.html">Home</a> | 
   <a href="events.html">Events</a> |
+   <a href="results.html">Results</a> |
   <a href="register.html">Register</a>
 </nav>
 <div id="particles-js"></div>
@@ -47,6 +48,13 @@ Explore Events
 </div>
 
 </section>
+  <section class="leaderboard">
+
+<h1>🏆 Leaderboard</h1>
+
+<div class="top3" id="top3"></div>
+
+</section>
 <footer class="footer">
 
 <h3>VIBRANCE</h3>
@@ -67,6 +75,7 @@ Explore Events
 
 </footer>
 <script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
 
 particlesJS("particles-js",{
@@ -99,6 +108,57 @@ ScrollReveal().reveal('.gallery',{
 delay:200,
 distance:'60px',
 origin:'bottom'
+});
+
+
+</script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB_pWzRpFgKMwYNwgefDqAHqSU4T4Cpksc",
+  authDomain: "vibrance-5e4f4.firebaseapp.com",
+  projectId: "vibrance-5e4f4",
+};
+
+// ✅ Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ✅ Get container
+const container = document.getElementById("leaderboard-container");
+
+// ✅ Real-time leaderboard
+onSnapshot(collection(db, "leaderboard"), (snapshot) => {
+
+  let data = [];
+
+  snapshot.forEach(doc => {
+    data.push({ id: doc.id, ...doc.data() });
+  });
+
+  // Sort by score
+  data.sort((a, b) => b.score - a.score);
+
+  // Top 3 only
+  const top3 = data.slice(0, 3);
+
+  container.innerHTML = "";
+
+  const medals = ["🏆", "🥈", "🥉"];
+
+  top3.forEach((dept, index) => {
+    container.innerHTML += `
+      <div class="leaderboard-card rank-${index+1}">
+        <h2>${index + 1} ${medals[index]}</h2>
+        <p>${dept.name}</p>
+        <span>${dept.score} Points</span>
+      </div>
+    `;
+  });
+
 });
 
 </script>
