@@ -1,40 +1,59 @@
-// Event Countdown
+// Run only after page loads
+document.addEventListener("DOMContentLoaded", () => {
+
+
+// ✅ Event Countdown
+var countdownEl = document.getElementById("countdown");
+
+if(countdownEl){
+
 var eventDate = new Date("March 30, 2026 18:00:00").getTime();
 
 var timer = setInterval(function(){
 
 var now = new Date().getTime();
-
 var distance = eventDate - now;
 
 if(distance < 0){
 clearInterval(timer);
-document.getElementById("countdown").innerHTML = "VIBRANCE has started!";
+countdownEl.innerHTML = "VIBRANCE has started!";
 return;
 }
 
 var days = Math.floor(distance / (1000 * 60 * 60 * 24));
 
-document.getElementById("countdown").innerHTML =
+countdownEl.innerHTML =
 "VIBRANCE begins in " + days + " days";
 
 },1000);
 
-
-// Popup functions
-function showPopup(){
-document.getElementById("popup").style.display="block";
-}
-
-function closePopup(){
-document.getElementById("popup").style.display="none";
 }
 
 
-// Event Search
-function searchEvents(){
+// ✅ Popup functions
+window.showPopup = function(){
+var popup = document.getElementById("popup");
+if(popup){
+popup.style.display = "block";
+}
+}
 
-var input = document.getElementById("searchInput").value.toLowerCase();
+window.closePopup = function(){
+var popup = document.getElementById("popup");
+if(popup){
+popup.style.display = "none";
+}
+}
+
+
+// ✅ Event Search
+window.searchEvents = function(){
+
+var inputEl = document.getElementById("searchInput");
+
+if(!inputEl) return; // stop if not on events page
+
+var input = inputEl.value.toLowerCase();
 
 var cards = document.getElementsByClassName("event-card");
 
@@ -51,3 +70,5 @@ cards[i].style.display="none";
 }
 
 }
+
+});

@@ -65,10 +65,10 @@ await signInWithEmailAndPassword(auth, email, password);
 
 msg.innerText = "✔ Login Successful";
 
-// 👉 Redirect after login
-setTimeout(() => {
-  window.location.href = "events.html";
-}, 1000);
+// After successful login
+const urlParams = new URLSearchParams(window.location.search);
+const redirectUrl = urlParams.get('redirect') || 'register.html'; // default if none
+window.location.href = redirectUrl;
 
 } catch (error) {
 

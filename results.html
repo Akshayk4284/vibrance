@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Results - VIBRANCE</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+
+  <div class="nav-left">
+    <h2>VIBRANCE</h2>
+  </div>
+
+  <div class="nav-center">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="results.html">Results</a>
+  </div>
+
+</nav>
+
+<!-- TITLE -->
+<h1 style="margin-top:40px;">🏆 Event Results</h1>
+
+<!-- RESULTS WILL SHOW HERE -->
+<div id="resultsContainer" class="event-container"></div>
+
+<!-- FIREBASE SCRIPT -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+// 🔥 SAME CONFIG AS YOUR PROJECT
+const firebaseConfig = {
+  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+  authDomain: "vibrance-fest-1310a.firebaseapp.com",
+  projectId: "vibrance-fest-1310a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("resultsContainer");
+
+// 🔥 CONNECT TO ADMIN DATA
+onSnapshot(collection(db, "results"), (snapshot) => {
+
+  container.innerHTML = "";
+
+  snapshot.forEach(doc => {
+
+    const data = doc.data();
+
+    container.innerHTML += `
+      <div class="event-card">
+
+        <h3>${data.eventName}</h3>
+
+        <p>🥇 1st: ${data.first}</p>
+        <p>🥈 2nd: ${data.second}</p>
+        <p>🥉 3rd: ${data.third}</p>
+
+      </div>
+    `;
+  });
+
+});
+
+</script>
+
+</body>
+</html>

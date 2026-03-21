@@ -1,146 +1,388 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+<title>Admin Panel</title>
 
-<title>VIBRANCE Admin Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
 
 <style>
-
-body{
-font-family:Arial;
-background:#f4f6f9;
-margin:0;
-padding:30px;
+.admin-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
 }
 
-h1{
-text-align:center;
+.form-box {
+    background: rgba(255,255,255,0.08);
+    padding: 25px;
+    border-radius: 15px;
 }
 
-form{
-margin-bottom:20px;
+select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
 }
 
-input{
-padding:8px;
-margin:5px;
+button {
+    background: #9d4edd;
+    color: white;
+    cursor: pointer;
 }
 
-button{
-padding:8px 12px;
-cursor:pointer;
+.card {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
 }
 
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
 }
 
-th,td{
-padding:12px;
-border:1px solid #ddd;
-text-align:center;
+.table th, .table td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
 }
-
-th{
-background:#007bff;
-color:white;
-}
-
 </style>
 
 </head>
 
 <body>
 
-<h1>VIBRANCE Admin Dashboard</h1>
+<!-- 🔐 PROTECTED CONTENT -->
+<div id="adminPanel" style="display:none;">
 
-<h2>Add Event</h2>
+<div class="admin-container">
 
-<form id="eventForm">
+<h1>📊 Admin Dashboard</h1>
 
-<input id="eventName" placeholder="Event Name" required>
+<h2>Add Result</h2>
 
-<input id="eventDate" placeholder="Event Date" required>
+<select id="eventName">
+  <option value="">Event Name</option>
+  <option>Dance</option>
+  <option>Song</option>
+  <option>Mappila pattu</option>
+  <option>Individual song</option>
+  <option>Group song</option>
+</select>
 
-<input id="eventVenue" placeholder="Venue" required>
+<!-- 🥇 FIRST -->
+<input type="text" id="firstName" placeholder="1st Winner Name">
+<select id="firstDept">
+  <option value="">Select Dept</option>
+  <option>CSE</option>
+  <option>ECE</option>
+  <option>MECH</option>
+  <option>EEE</option>
+  <option>AD</option>
+  <option>CIVIL</option>
+  <option>MCA</option>
+</select>
 
-<button type="submit">Add Event</button>
+<!-- 🥈 SECOND -->
+<input type="text" id="secondName" placeholder="2nd Winner Name">
+<select id="secondDept">
+  <option value="">Select Dept</option>
+  <option>CSE</option>
+  <option>ECE</option>
+  <option>MECH</option>
+  <option>EEE</option>
+  <option>AD</option>
+  <option>CIVIL</option>
+  <option>MCA</option>
+</select>
 
-</form>
+<!-- 🥉 THIRD -->
+<input type="text" id="thirdName" placeholder="3rd Winner Name">
+<select id="thirdDept">
+  <option value="">Select Dept</option>
+  <option>CSE</option>
+  <option>ECE</option>
+  <option>MECH</option>
+  <option>EEE</option>
+  <option>AD</option>
+  <option>CIVIL</option>
+  <option>MCA</option>
+</select>
 
+<button onclick="addResult()">Add Result</button>
 
-<h2>Registrations</h2>
+</div>
 
-<table>
-
+<!-- TABLE -->
+<table class="table" id="resultsTable">
 <thead>
-
 <tr>
-<th>Name</th>
-<th>Register Number</th>
-<th>Email</th>
-<th>Department</th>
+<th>Event</th>
+<th>1st</th>
+<th>2nd</th>
+<th>3rd</th>
 </tr>
-
 </thead>
-
-<tbody id="tableBody"></tbody>
-
+<tbody></tbody>
 </table>
 
+<!-- LEADERBOARD -->
+<h2>🏆 Leaderboard</h2>
+<div id="leaderboard"></div>
+<h2>👨‍🎓 Student Registrations</h2>
+
+<table class="table" id="regTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Dept</th>
+<th>Event</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<button onclick="exportData()">📥 Export CSV</button>
+<!-- 🔥 LOGOUT -->
+<div style="text-align:center; margin-top:40px;">
+  <button onclick="logout()" style="
+    width:200px;
+    background:#ff4d4d;
+    font-weight:bold;
+  ">
+    🚪 Logout
+  </button>
+</div>
+
+</div>
+</div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import { getFirestore, collection, getDocs }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getFirestore, collection, addDoc, doc, setDoc,
+  onSnapshot, getDocs, deleteDoc, updateDoc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
   authDomain: "vibrance-fest-1310a.firebaseapp.com",
   projectId: "vibrance-fest-1310a",
-  storageBucket: "vibrance-fest-1310a.firebasestorage.app",
+  storageBucket: "vibrance-fest-1310a.appspot.com",
   messagingSenderId: "564934076568",
   appId: "1:564934076568:web:8ef57661b9129d474208ed"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
+// 🔐 Auth
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return location.href = "admin-login.html";
 
-async function loadData(){
+  const snap = await getDoc(doc(db,"users",user.uid));
+  if (!snap.exists() || !snap.data().isAdmin) {
+    alert("Access denied");
+    return location.href="index.html";
+  }
 
-const querySnapshot = await getDocs(collection(db,"registrations"));
-
-querySnapshot.forEach((doc)=>{
-
-const data = doc.data();
-
-const row = `
-<tr>
-<td>${data.name}</td>
-<td>${data.register}</td>
-<td>${data.email}</td>
-<td>${data.department}</td>
-</tr>
-`;
-
-document.getElementById("tableBody").innerHTML += row;
-
+  document.getElementById("adminPanel").style.display="block";
 });
 
-}
+window.logout = async ()=> {
+  await signOut(auth);
+  location.href="login.html";
+};
 
-loadData();
+// ================= ADD RESULT =================
+window.addResult = async function(){
+
+  const eventName = document.getElementById("eventName").value;
+
+  const firstName = document.getElementById("firstName").value;
+  const firstDept = document.getElementById("firstDept").value;
+
+  const secondName = document.getElementById("secondName").value;
+  const secondDept = document.getElementById("secondDept").value;
+
+  const thirdName = document.getElementById("thirdName").value;
+  const thirdDept = document.getElementById("thirdDept").value;
+
+  if (!eventName || !firstName || !firstDept || !secondName || !secondDept || !thirdName || !thirdDept){
+    alert("Fill all fields ❗");
+    return;
+  }
+
+  if(window.editId){
+    await updateDoc(doc(db,"results",window.editId),{
+      eventName,
+      first:{name:firstName,dept:firstDept},
+      second:{name:secondName,dept:secondDept},
+      third:{name:thirdName,dept:thirdDept}
+    });
+    window.editId=null;
+    alert("Updated ✅");
+  }else{
+    await addDoc(collection(db,"results"),{
+      eventName,
+      first:{name:firstName,dept:firstDept},
+      second:{name:secondName,dept:secondDept},
+      third:{name:thirdName,dept:thirdDept}
+    });
+    alert("Added ✅");
+  }
+
+  await rebuildLeaderboard();
+};
+
+// ================= DELETE =================
+window.deleteResult = async function(id){
+  if(!confirm("Delete?")) return;
+  await deleteDoc(doc(db,"results",id));
+  await rebuildLeaderboard();
+};
+
+// ================= EDIT =================
+window.editResult = function(id,data){
+  document.getElementById("eventName").value = data.eventName;
+
+  document.getElementById("firstName").value = data.first.name;
+  document.getElementById("firstDept").value = data.first.dept;
+
+  document.getElementById("secondName").value = data.second.name;
+  document.getElementById("secondDept").value = data.second.dept;
+
+  document.getElementById("thirdName").value = data.third.name;
+  document.getElementById("thirdDept").value = data.third.dept;
+
+  window.editId = id;
+};
+
+// ================= REBUILD LEADERBOARD =================
+async function rebuildLeaderboard(){
+
+  const snap = await getDocs(collection(db,"results"));
+
+  const points={first:5,second:3,third:1};
+  const table={};
+
+  snap.forEach(doc=>{
+    const d=doc.data();
+    table[d.first.dept]=(table[d.first.dept]||0)+points.first;
+    table[d.second.dept]=(table[d.second.dept]||0)+points.second;
+    table[d.third.dept]=(table[d.third.dept]||0)+points.third;
+  });
+
+  const old=await getDocs(collection(db,"leaderboard"));
+  for(const d of old.docs) await deleteDoc(d.ref);
+
+  for(let dept in table){
+    await setDoc(doc(db,"leaderboard",dept.toLowerCase()),{
+      name:dept,
+      score:table[dept]
+    });
+  }
+}
+function clearForm(){
+  document.getElementById("eventName").value = "";
+
+  document.getElementById("firstName").value = "";
+  document.getElementById("firstDept").value = "";
+
+  document.getElementById("secondName").value = "";
+  document.getElementById("secondDept").value = "";
+
+  document.getElementById("thirdName").value = "";
+  document.getElementById("thirdDept").value = "";
+
+  window.editId = null;
+}
+// ================= RESULTS TABLE =================
+const tableBody=document.querySelector("#resultsTable tbody");
+
+onSnapshot(collection(db,"results"),snap=>{
+  tableBody.innerHTML="";
+
+  snap.forEach(docSnap=>{
+    const d=docSnap.data();
+    const id=docSnap.id;
+
+    tableBody.innerHTML+=`
+    <tr>
+      <td>${d.eventName}</td>
+      <td>${d.first.name} (${d.first.dept})</td>
+      <td>${d.second.name} (${d.second.dept})</td>
+      <td>${d.third.name} (${d.third.dept})</td>
+      <td>
+        <button onclick='editResult("${id}", ${JSON.stringify(d)})'>Edit</button>
+        <button onclick='deleteResult("${id}")'>Delete</button>
+      </td>
+    </tr>`;
+  });
+});
+
+// ================= LEADERBOARD =================
+const leaderboardDiv=document.getElementById("leaderboard");
+
+onSnapshot(collection(db,"leaderboard"),snap=>{
+  let arr=[];
+  snap.forEach(d=>arr.push(d.data()));
+  arr.sort((a,b)=>b.score-a.score);
+
+  leaderboardDiv.innerHTML="";
+
+  arr.forEach((d,i)=>{
+    const medals=["🥇","🥈","🥉"];
+    leaderboardDiv.innerHTML+=`
+      <div class="card">
+        ${medals[i]||""} ${d.name} - ${d.score} pts
+      </div>`;
+  });
+});
+
+// ================= REG TABLE =================
+const regBody=document.querySelector("#regTable tbody");
+
+onSnapshot(collection(db,"registrations"),snap=>{
+  regBody.innerHTML="";
+  snap.forEach(doc=>{
+    const d=doc.data();
+    regBody.innerHTML+=`
+    <tr>
+      <td>${d.name}</td>
+      <td>${d.email}</td>
+      <td>${d.department}</td>
+      <td>${d.event}</td>
+    </tr>`;
+  });
+});
+
+// ================= EXPORT =================
+window.exportData = async function(){
+  const snap=await getDocs(collection(db,"registrations"));
+  let csv="Name,Email,Department,Event\n";
+
+  snap.forEach(doc=>{
+    const d=doc.data();
+    csv+=`${d.name},${d.email},${d.department},${d.event}\n`;
+  });
+
+  const blob=new Blob([csv]);
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="registrations.csv";
+  a.click();
+};
 
 </script>
-
 </body>
-
 </html>

@@ -9,16 +9,44 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-<script src="https://unpkg.com/scrollreveal"></script>
+
 </head>
+
 <body>
 
-<nav>
-  <a href="index.html">Home</a>
-  <a href="events.html">Events</a>
-  <a href="signup.html">Signup</a>
+<nav class="navbar">
+
+  <!-- LEFT -->
+  <div class="nav-left">
+    <h2>VIBRANCE</h2>
+  </div>
+
+  <!-- CENTER -->
+  <div class="nav-center">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="results.html">Results</a>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="nav-right">
+
+    <span id="userName"></span>
+
+    <div class="account-menu">
+      <button id="accountBtn" class="btn">Account ⌄</button>
+
+      <div id="dropdown" class="dropdown">
+        <a id="loginOption">Login</a>
+        <a id="signupOption">Signup</a>
+        <a id="logoutOption" style="display:none;">Logout</a>
+      </div>
+    </div>
+
+  </div>
+
 </nav>
-<div id="particles-js"></div>
+
 <section class="hero">
 
 <h1 class="animate__animated animate__fadeInDown">VIBRANCE</h1>
@@ -26,12 +54,15 @@
 <p class="animate__animated animate__fadeInUp">
 The Ultimate Platform for Campus Events
 </p>
+
 <a href="events.html" class="btn animate__animated animate__zoomIn">
 Explore Events
 </a>
 
 <h2 id="countdown"></h2>
+
 </section>
+
 <section class="gallery">
 
 <h1>
@@ -47,60 +78,147 @@ Explore Events
 </div>
 
 </section>
+<section class="leaderboard">
+
+<h1>🏆 Leaderboard</h1>
+
+<div id="leaderboardContainer"></div>
+
+</section>
+
 <footer class="footer">
 
 <h3>VIBRANCE</h3>
 
-<p>Celebrating creativity, culture and talent at AWH Engineering College</p>
-
-<p>Follow us</p>
+<p>Celebrating creativity, culture and talent</p>
 
 <div class="social">
-
 <a href="#">Instagram</a>
 <a href="#">Facebook</a>
 <a href="#">YouTube</a>
-
 </div>
 
-<p class="copy">© 2026 VIBRANCE Festival</p>
+<p class="copy">© 2026 VIBRANCE</p>
 
 </footer>
+
+<!-- JS -->
 <script src="js/script.js"></script>
-<script>
 
-particlesJS("particles-js",{
-particles:{
-number:{value:80},
-size:{value:3},
-move:{speed:2},
-line_linked:{enable:true},
-color:{value:"#9d4edd"}
-}
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+  authDomain: "vibrance-fest-1310a.firebaseapp.com",
+  projectId: "vibrance-fest-1310a"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ELEMENTS
+const accountBtn = document.getElementById("accountBtn");
+const dropdown = document.getElementById("dropdown");
+
+const loginOption = document.getElementById("loginOption");
+const signupOption = document.getElementById("signupOption");
+const logoutOption = document.getElementById("logoutOption");
+
+// OPEN / CLOSE DROPDOWN
+accountBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  dropdown.style.display =
+    dropdown.style.display === "block" ? "none" : "block";
+});
+
+// CLOSE WHEN CLICK OUTSIDE
+document.addEventListener("click", (e) => {
+  if (!accountBtn.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.style.display = "none";
+  }
+});
+
+// NAVIGATION
+loginOption.onclick = () => window.location.href = "login.html";
+signupOption.onclick = () => window.location.href = "signup.html";
+
+logoutOption.onclick = () => {
+  signOut(auth).then(() => location.reload());
+};
+
+// AUTH STATE
+onAuthStateChanged(auth, async (user) => {
+
+  if(user){
+
+    loginOption.style.display = "none";
+    signupOption.style.display = "none";
+    logoutOption.style.display = "block";
+
+    try {
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.exists()){
+        accountBtn.innerText = "👤 " + docSnap.data().name + " ⌄";
+      } else {
+        accountBtn.innerText = "👤 Account ⌄";
+      }
+
+    } catch {
+      accountBtn.innerText = "👤 Account ⌄";
+    }
+
+  } else {
+
+    loginOption.style.display = "block";
+    signupOption.style.display = "block";
+    logoutOption.style.display = "none";
+
+    accountBtn.innerText = "Account ⌄";
+  }
+
+});
+import { collection, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const leaderboardContainer = document.getElementById("leaderboardContainer");
+
+onSnapshot(collection(db, "leaderboard"), (snapshot) => {
+
+  let data = [];
+
+  snapshot.forEach(doc => {
+    data.push(doc.data());
+  });
+
+  // 🔥 Sort by score
+  data.sort((a, b) => b.score - a.score);
+
+  leaderboardContainer.innerHTML = "";
+
+  const medals = ["🥇", "🥈", "🥉"];
+
+  data.forEach((dept, index) => {
+
+    leaderboardContainer.innerHTML += `
+      <div class="leaderboard-card">
+        ${medals[index] || ""} ${dept.name} - ${dept.score} pts
+      </div>
+    `;
+
+  });
+
 });
 
 </script>
-<script>
 
-ScrollReveal().reveal('.hero',{
-delay:200,
-distance:'60px',
-origin:'bottom'
-});
-
-ScrollReveal().reveal('.event-card',{
-delay:300,
-distance:'40px',
-origin:'bottom',
-interval:200
-});
-
-ScrollReveal().reveal('.gallery',{
-delay:200,
-distance:'60px',
-origin:'bottom'
-});
-
-</script>
 </body>
 </html>

@@ -41,15 +41,13 @@ from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-// ✅ YOUR REAL FIREBASE CONFIG
+// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
   authDomain: "vibrance-fest-1310a.firebaseapp.com",
-  projectId: "vibrance-fest-1310a",
-  storageBucket: "vibrance-fest-1310a.firebasestorage.app",
-  messagingSenderId: "564934076568",
-  appId: "1:564934076568:web:8ef57661b9129d474208ed"
+  projectId: "vibrance-fest-1310a"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -66,24 +64,33 @@ const reg = document.getElementById("reg").value;
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
+// 🔐 Basic validation
+if(password.length < 6){
+  msg.innerText = "❌ Password must be at least 6 characters";
+  return;
+}
+
 msg.innerText = "Creating account...";
 
 try {
 
-// 🔐 Create user
 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 const user = userCredential.user;
 
-// 📦 Store extra data
+// 🎯 SET ROLE (ADMIN / USER)
+const role = (email === "admin@vibrance.com") ? "admin" : "user";
+
+// 📦 Store in Firestore
 await setDoc(doc(db, "users", user.uid), {
-  name: name,
+  name,
   register: reg,
-  email: email
+  email,
+  role
 });
 
 msg.innerText = "✔ Signup Successful";
 
-// 👉 Redirect to login
+// 🔁 Redirect
 setTimeout(() => {
   window.location.href = "login.html";
 }, 1500);
@@ -98,6 +105,5 @@ msg.innerText = "❌ " + error.message;
 });
 
 </script>
-
 </body>
 </html>

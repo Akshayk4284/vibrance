@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Admin Login - VIBRANCE</title>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="form-container">
+
+<h2>🔐 Admin Login</h2>
+
+<form id="adminLoginForm">
+
+<input id="email" type="email" placeholder="Admin Email" required>
+
+<input id="password" type="password" placeholder="Password" required>
+
+<button type="submit">Login as Admin</button>
+
+<p id="msg" style="margin-top:10px;"></p>
+
+</form>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+// 🔥 YOUR FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+  authDomain: "vibrance-fest-1310a.firebaseapp.com",
+  projectId: "vibrance-fest-1310a"
+};
+
+// 🔥 INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// 🎯 ELEMENTS
+const form = document.getElementById("adminLoginForm");
+const msg = document.getElementById("msg");
+
+// 🚀 LOGIN LOGIC
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  msg.innerText = "Checking admin access...";
+
+  try {
+
+    // 🔐 LOGIN
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+
+    // 🔍 CHECK ADMIN ROLE
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists() && docSnap.data().isAdmin){
+
+      msg.innerText = "✔ Admin login successful";
+      
+      // 👉 GO TO ADMIN PANEL
+      setTimeout(() => {
+        window.location.href = "admin.html";
+      }, 1000);
+
+    } else {
+
+      msg.innerText = "❌ Access denied (Not Admin)";
+      
+      // 🚫 LOGOUT NON-ADMIN
+      await signOut(auth);
+    }
+
+  } catch (error) {
+
+    console.error(error);
+    msg.innerText = "❌ " + error.message;
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>

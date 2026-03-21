@@ -1,122 +1,152 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>Register - VIBRANCE</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+  <title>Register - VIBRANCE</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="events.html">Events</a> |
+    <a href="register.html">Register</a>
+  </nav>
 
-<nav>
-  <a href="index.html">Home</a> |
-  <a href="events.html">Events</a> |
-  <a href="register.html">Register</a>
-</nav>
+  <div class="form-wrapper">
 
-<div class="form-container">
+  <div class="form-card">
 
-<h2>VIBRANCE Event Registration</h2>
+    <h2>🎉 VIBRANCE Registration</h2>
 
-<form id="registerForm">
+    <form id="registerForm">
 
-<label>Student Name</label>
-<input id="name" type="text" placeholder="Enter your name" required>
+      <div class="form-grid">
 
-<label>Register Number</label>
-<input id="reg" type="text" placeholder="Enter register number" required>
+        <div class="input-group">
+          <label>Name</label>
+          <input type="text" id="name" placeholder="Enter your name" required>
+        </div>
 
-<label>Email</label>
-<input id="email" type="email" placeholder="Enter email" required>
+        <div class="input-group">
+          <label>Register No</label>
+          <input type="text" id="reg" placeholder="Enter register number" required>
+        </div>
 
-<label>Department</label>
-<select id="dept" required>
-<option value="">Select Department</option>
-<option>CSE</option>
-<option>ECE</option>
-<option>EEE</option>
-<option>MECH</option>
-<option>CIVIL</option>
-<option>MCA</option>
-</select>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="Enter email" required>
+        </div>
 
-<!-- ✅ NEW EVENT FIELD -->
-<label>Event Name</label>
-<input id="event" type="text" readonly>
+        <div class="input-group">
+          <label>Department</label>
+          <select id="department">
+            <option>Select Department</option>
+            <option>CSE</option>
+            <option>ECE</option>
+            <option>MECH</option>
+            <option>EEE</option>
+          </select>
+        </div>
 
-<button type="submit">Register</button>
-<p id="msg" style="color:white; text-align:center;"></p>
-<p id="successMsg"></p>
+      </div>
 
-</form>
+      <div class="input-group full">
+        <label>Event</label>
+        <input type="text" id="event" readonly>
+      </div>
+
+      <button type="submit" class="register-btn">🚀 Register Now</button>
+
+      <p id="msg"></p>
+
+    </form>
+
+  </div>
 
 </div>
 
-<!-- ✅ AUTO-FILL EVENT FROM URL -->
-<script>
-const params = new URLSearchParams(window.location.search);
-const eventName = params.get("event");
+  <!-- Auto-fill event from URL -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const eventName = params.get("event");
+    if (eventName) {
+      document.getElementById("event").value = eventName;
+    }
+  </script>
 
-if(eventName){
-document.getElementById("event").value = eventName;
-}
+  <!-- Firebase Backend -->
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
+    authDomain: "vibrance-fest-1310a.firebaseapp.com",
+    projectId: "vibrance-fest-1310a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const form = document.getElementById("registerForm");
+  const msg = document.getElementById("msg");
+
+  // Initially hide the form (we'll show it only if user is logged in)
+  form.style.display = "none";
+
+  // Check authentication state
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is logged in – show form and optionally pre-fill email
+      form.style.display = "block";
+      
+      // OPTIONAL: Pre-fill email from logged-in user (if you want)
+      // document.getElementById("email").value = user.email;
+      // document.getElementById("email").readOnly = true; // make it read-only if desired
+      
+      // You could also pre-fill name from user.displayName if available
+    } else {
+      // No user – redirect to login page
+      // Save current page to redirect back after login
+      window.location.href = "login.html?redirect=" + encodeURIComponent(window.location.href);
+    }
+  });
+
+  // Handle form submission
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.innerText = "Registering...";
+
+    const name = document.getElementById("name").value;
+    const reg = document.getElementById("reg").value;
+    const email = document.getElementById("email").value;
+    const dept = document.getElementById("dept").value;
+    const eventField = document.getElementById("event").value;
+
+    if (!eventField) {
+      msg.innerText = "❌ No event selected. Please go back to events page.";
+      return;
+    }
+
+    try {
+      // Get current user UID (optional, for tracking)
+      const user = auth.currentUser;
+      await addDoc(collection(db, "registrations"), {
+        name,
+        register: reg,
+        email,
+        department: dept,
+        event: eventField,
+        userId: user ? user.uid : null,  // store who registered
+        time: new Date()
+      });
+      msg.innerText = "✔ Registration Successful";
+      form.reset();
+    } catch (error) {
+      msg.innerText = "❌ " + error.message;
+      console.error(error);
+    }
+  });
 </script>
-
-<!-- ✅ FIREBASE BACKEND -->
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc } 
-from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDM-RJYuTB1-qHU75cBJOVL_W_EpQShr_Q",
-  authDomain: "vibrance-fest-1310a.firebaseapp.com",
-  projectId: "vibrance-fest-1310a"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const form = document.getElementById("registerForm");
-const msg = document.getElementById("msg");
-
-form.addEventListener("submit", async (e)=>{
-
-e.preventDefault();
-
-msg.innerText = "Registering...";
-
-const name = document.getElementById("name").value;
-const reg = document.getElementById("reg").value;
-const email = document.getElementById("email").value;
-const dept = document.getElementById("dept").value;
-const event = document.getElementById("event").value;
-
-try {
-
-await addDoc(collection(db,"registrations"),{
-name,
-register:reg,
-email,
-department:dept,
-event,
-time:new Date()
-});
-
-msg.innerText = "✔ Registration Successful";
-
-} catch(error){
-
-msg.innerText = "❌ " + error.message;
-console.log(error);
-
-}
-
-});
-
-</script>
-
 </body>
 </html>

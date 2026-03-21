@@ -16,49 +16,50 @@ placeholder="Search events..."
 onkeyup="searchEvents()">
 </div>
 
+<!-- FILTER BUTTONS -->
+<div class="filter-buttons">
+  <button onclick="filterEvents('all')" class="active">All</button>
+  <button onclick="filterEvents('onstage')">On Stage</button>
+  <button onclick="filterEvents('offstage')">Off Stage</button>
+  <button onclick="filterEvents('prestage')">Pre Stage</button>
+</div>
+
+<!-- EVENTS WILL LOAD HERE -->
 <div class="event-container">
 
-<!-- Event 1 -->
-<div class="event-card">
+  <div class="event-card" data-category="onstage">
+    <img src="assets/dance.jpg">
+    <h3>Dance Competition</h3>
+    <p>Date: 10 March</p>
+    <p>Venue: Auditorium</p>
+    <a href="register.html?event=Dance Competition" class="btn">Register</a>
+  </div>
 
-<img src="assets/dance.jpg">
+  <div class="event-card" data-category="onstage">
+    <img src="assets/music.jpg">
+    <h3>Battle of Bands</h3>
+    <p>Date: 11 March</p>
+    <p>Venue: Main Stage</p>
+    <a href="register.html?event=Battle of Bands" class="btn">Register</a>
+  </div>
 
-<h3>Dance Competition</h3>
-<p>Date: 10 March</p>
-<p>Venue: Auditorium</p>
+  <div class="event-card" data-category="offstage">
+    <img src="assets/drama.jpg">
+    <h3>Photography</h3>
+    <p>Date: 12 March</p>
+    <p>Venue: Campus</p>
+    <a href="register.html?event=Photography" class="btn">Register</a>
+  </div>
 
-<a href="register.html?event=Dance Competition" class="btn">Register</a>
-
-</div>
-
-<!-- Event 2 -->
-<div class="event-card">
-
-<img src="assets/music.jpg">
-
-<h3>Battle of Bands</h3>
-<p>Date: 11 March</p>
-<p>Venue: Main Stage</p>
-
-<a href="register.html?event=Battle of Bands" class="btn">Register</a>
-
-</div>
-
-<!-- Event 3 -->
-<div class="event-card">
-
-<img src="assets/drama.jpg">
-
-<h3>Drama Night</h3>
-<p>Date: 12 March</p>
-<p>Venue: Seminar Hall</p>
-
-<a href="register.html?event=Drama Night" class="btn">Register</a>
+  <div class="event-card" data-category="prestage">
+    <img src="assets/drama.jpg">
+    <h3>Poster Design</h3>
+    <p>Date: 9 March</p>
+    <p>Venue: Room</p>
+    <a href="register.html?event=Poster Design" class="btn">Register</a>
+  </div>
 
 </div>
-
-</div>
-
 <script src="js/script.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
@@ -71,6 +72,31 @@ glare:true,
 "max-glare":0.3
 });
 </script>
+<script>
+function filterEvents(type){
 
+  const cards = document.querySelectorAll(".event-card");
+
+  cards.forEach(card => {
+
+    if(type === "all"){
+      card.style.display = "block";
+    } else {
+      if(card.dataset.category === type){
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    }
+
+  });
+
+  // 🔥 Active button highlight
+  document.querySelectorAll(".filter-buttons button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  event.target.classList.add("active");
+}
+</script>
 </body>
 </html>
