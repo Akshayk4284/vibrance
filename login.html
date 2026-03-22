@@ -21,14 +21,6 @@
 
 <button type="submit">Login</button>
 
-<p>
-  Didn’t get verification email? 
-  <span onclick="resendEmail()" style="color:#ffd369;cursor:pointer;">
-    Resend
-  </span>
-</p>
-
-<p id="msg"></p>
 
 <p id="msg"></p>
 
@@ -73,13 +65,7 @@ form.addEventListener("submit", async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔒 CHECK EMAIL VERIFICATION (AFTER LOGIN)
-    if (!user.emailVerified) {
-      msg.innerText = "❌ Please verify your email before logging in.";
-      await auth.signOut();
-      return;
-    }
-
+    
     msg.innerText = "✔ Login Successful";
 
     // 🔁 Redirect
